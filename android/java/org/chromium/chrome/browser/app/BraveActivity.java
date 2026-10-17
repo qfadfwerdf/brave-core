@@ -1147,6 +1147,21 @@ public abstract class BraveActivity extends ChromeActivity
     @Override
     public void onBrowsingDataCleared() {}
 
+    // Kept per Activity instance, never enabled for normal Brave launches.
+    private boolean mTubePlayerPresentationRequested;
+
+    /**
+     * A UI coordinator can use this read-only signal to opt into app-like
+     * presentation on YouTube pages. No global toolbar state is changed here.
+     */
+    public boolean isTubePlayerPresentationActive() {
+        Tab tab = getActivityTab();
+        return mTubePlayerPresentationRequested
+                && tab != null
+                && tab.getUrl() != null
+                && TubePlayerLaunch.isYouTubePage(tab.getUrl().getSpec());
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1159,6 +1174,7 @@ public abstract class BraveActivity extends ChromeActivity
             // occur before tab restoration finishes.
             if (tubePlayerTab != null) {
                 TubePlayerLaunch.consumeLaunchRequest(getIntent());
+                mTubePlayerPresentationRequested = true;
                 if (tubePlayerTab.getUrl() != null
                         && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
                     tubePlayerTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
@@ -2620,6 +2636,7 @@ public abstract class BraveActivity extends ChromeActivity
             // Handle a TubePlayer request delivered to an already-running Activity.
             // Do not redirect if the user is browsing an existing page.
             if (TubePlayerLaunch.consumeLaunchRequest(intent)) {
+                mTubePlayerPresentationRequested = true;
                 Tab currentTab = getActivityTab();
                 if (currentTab != null
                         && currentTab.getUrl() != null
