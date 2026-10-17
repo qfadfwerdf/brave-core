@@ -2721,6 +2721,12 @@ public abstract class BraveActivity extends ChromeActivity
                 // request on the Activity intent for the startup retry path.
                 setIntent(intent);
                 handlePendingTubePlayerLaunch();
+            } else if (Intent.ACTION_MAIN.equals(intent.getAction())
+                    && intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+                // The normal Brave launcher may reuse the same tabbed Activity.
+                // Explicitly leave TubePlayer mode rather than hiding Brave UI.
+                mTubePlayerPresentationRequested = false;
+                setIntent(intent);
             }
             String openUrl = intent.getStringExtra(BraveActivity.OPEN_URL);
             if (!TextUtils.isEmpty(openUrl) && !BraveIntentHandler.isUrlUnsafe(openUrl)) {
