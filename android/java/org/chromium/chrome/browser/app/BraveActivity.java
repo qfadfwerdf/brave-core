@@ -1226,8 +1226,10 @@ public abstract class BraveActivity extends ChromeActivity
 
     private void updateTubePlayerToolbarPresentation() {
         if (getToolbarManager() instanceof BraveToolbarManager) {
-            ((BraveToolbarManager) getToolbarManager())
-                    .setTubePlayerToolbarHidden(isTubePlayerPresentationActive());
+            boolean hideBrowserChrome = isTubePlayerPresentationActive();
+            BraveToolbarManager toolbarManager = (BraveToolbarManager) getToolbarManager();
+            toolbarManager.setTubePlayerToolbarHidden(hideBrowserChrome);
+            toolbarManager.setTubePlayerBottomToolbarHidden(hideBrowserChrome);
         }
     }
 
