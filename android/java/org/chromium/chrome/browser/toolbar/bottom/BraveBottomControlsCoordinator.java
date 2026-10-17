@@ -51,6 +51,7 @@ public class BraveBottomControlsCoordinator extends BottomControlsCoordinator {
 
     // Own members.
     private @Nullable BottomToolbarCoordinator mBottomToolbarCoordinator;
+    private boolean mTubePlayerBottomToolbarHidden;
     private final OnLongClickListener mTabSwitcherLongclickListener;
     private final ActivityTabProvider mTabProvider;
     private final ThemeColorProvider mThemeColorProvider;
@@ -158,6 +159,9 @@ public class BraveBottomControlsCoordinator extends BottomControlsCoordinator {
                     incognitoStateProvider,
                     topToolbarRoot,
                     closeAllTabsAction);
+            // The presentation request may arrive before native initialization.
+            mBottomToolbarCoordinator.setTubePlayerBottomToolbarHidden(
+                    mTubePlayerBottomToolbarHidden);
         }
     }
 
@@ -190,6 +194,7 @@ public class BraveBottomControlsCoordinator extends BottomControlsCoordinator {
 
     /** Apply dedicated YouTube presentation to Brave's bottom browser controls. */
     public void setTubePlayerBottomToolbarHidden(boolean hidden) {
+        mTubePlayerBottomToolbarHidden = hidden;
         if (mBottomToolbarCoordinator != null) {
             mBottomToolbarCoordinator.setTubePlayerBottomToolbarHidden(hidden);
         }
