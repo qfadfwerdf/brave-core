@@ -3,6 +3,8 @@
 <activity
     android:name="org.chromium.chrome.browser.app.TubePlayerLauncherActivity"
     android:exported="true"
+    android:label="TubePlayer"
+    android:icon="@drawable/tubeplayer_launcher_icon"
     android:theme="@android:style/Theme.NoDisplay">
     <intent-filter>
         <action android:name="android.intent.action.MAIN" />
