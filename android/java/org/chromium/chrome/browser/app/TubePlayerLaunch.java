@@ -20,6 +20,21 @@ public final class TubePlayerLaunch {
     public static final String YOUTUBE_HOST = "youtube.com";
     public static final String MOBILE_YOUTUBE_HOST = "m.youtube.com";
 
+    /**
+     * Allow only HTTPS YouTube URLs for dedicated presentation.
+     * Avoid matching misleading hosts such as youtube.com.example.org.
+     */
+    public static boolean isYouTubePage(String url) {
+        if (url == null) return false;
+        try {
+            android.net.Uri parsed = android.net.Uri.parse(url);
+            return "https".equalsIgnoreCase(parsed.getScheme())
+                    && isYouTubeHost(parsed.getHost());
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
     /** Only YouTube pages are eligible for the dedicated app presentation. */
     public static boolean isYouTubeHost(String host) {
         if (host == null) return false;
