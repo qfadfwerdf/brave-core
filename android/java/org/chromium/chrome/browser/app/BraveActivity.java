@@ -1152,12 +1152,17 @@ public abstract class BraveActivity extends ChromeActivity
         super.onResume();
         // Experimental opt-in only; do not interfere with normal Brave launches.
         // Consume the intent extra once to avoid redirecting after every resume.
-        if (TubePlayerLaunch.consumeLaunchRequest(getIntent())) {
+        if (getIntent() != null
+                && getIntent().getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
             Tab tubePlayerTab = getActivityTab();
-            if (tubePlayerTab != null
-                    && tubePlayerTab.getUrl() != null
-                    && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
-                tubePlayerTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
+            // Do not consume the request until a tab exists. The first resume can
+            // occur before tab restoration finishes.
+            if (tubePlayerTab != null) {
+                TubePlayerLaunch.consumeLaunchRequest(getIntent());
+                if (tubePlayerTab.getUrl() != null
+                        && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
+                    tubePlayerTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
+                }
             }
         }
         mIsProcessingPendingDappsTxRequest = false;
