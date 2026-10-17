@@ -1172,7 +1172,11 @@ public abstract class BraveActivity extends ChromeActivity
         if (tab == null) return;
         TubePlayerLaunch.consumeLaunchRequest(launchIntent);
         mTubePlayerPresentationRequested = true;
-        if (tab.getUrl() != null && UrlUtilities.isNtpUrl(tab.getUrl().getSpec())) {
+        // An explicit TubePlayer launch should open its home screen even if
+        // Brave restored a non-NTP tab from a previous browser session.
+        // Avoid reloading when YouTube is already visible.
+        if (tab.getUrl() == null
+                || !TubePlayerLaunch.isYouTubePage(tab.getUrl().getSpec())) {
             tab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
         }
     }
