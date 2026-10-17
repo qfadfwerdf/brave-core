@@ -240,6 +240,15 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
         }
     }
 
+    /**
+     * Experimental TubePlayer presentation hook. The owning UI coordinator
+     * must call this again after navigation and tab-switcher transitions.
+     * This only changes the toolbar view; it does not affect Brave Shields.
+     */
+    public void setTubePlayerToolbarHidden(boolean hidden) {
+        mControlContainer.setVisibility(hidden ? View.GONE : View.VISIBLE);
+    }
+
     public boolean isToolbarPhone() {
         return mBraveToolbarLayout instanceof ToolbarPhone;
     }
