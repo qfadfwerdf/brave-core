@@ -23,7 +23,9 @@ public final class TubePlayerLauncherActivity extends Activity {
         // ordinary Brave launcher intent during startup.
         intent.setAction("org.brave.tubeplayer.action.OPEN");
         intent.putExtra(TubePlayerLaunch.EXTRA_ENABLED, true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // Reuse the existing tabbed Activity when present, but do not clear
+        // the entire task stack (which could discard unrelated Brave UI).
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
