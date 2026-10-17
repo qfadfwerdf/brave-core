@@ -197,6 +197,7 @@ import org.chromium.chrome.browser.shields.ContentFilteringFragment;
 import org.chromium.chrome.browser.shields.CreateCustomFiltersFragment;
 import org.chromium.chrome.browser.site_settings.BraveWalletEthereumConnectedSites;
 import org.chromium.chrome.browser.tab.Tab;
+import org.chromium.chrome.browser.tab.EmptyTabObserver;
 import org.chromium.chrome.browser.tab.TabLaunchType;
 import org.chromium.chrome.browser.tab.TabSelectionType;
 import org.chromium.chrome.browser.tabbed_mode.BraveTabbedAppMenuPropertiesDelegate;
@@ -591,6 +592,7 @@ public abstract class BraveActivity extends ChromeActivity
 
     @Override
     protected void onDestroyInternal() {
+        observeTubePlayerNavigation(null);
         if (mTubePlayerTabObserverRegistered) {
             getActivityTabProvider().removeObserver(mTubePlayerTabChangeCallback);
             mTubePlayerTabObserverRegistered = false;
@@ -1187,8 +1189,29 @@ public abstract class BraveActivity extends ChromeActivity
 
     // The ActivityTabProvider tracks the selected tab across navigation and
     // tab switching. Only register after native startup, when it is available.
+    private final EmptyTabObserver mTubePlayerNavigationObserver =
+            new EmptyTabObserver() {
+                @Override
+                public void onUrlUpdated(Tab tab) {
+                    updateTubePlayerToolbarPresentation();
+                }
+            };
+    private Tab mTubePlayerObservedTab;
+
+    private void observeTubePlayerNavigation(Tab tab) {
+        if (mTubePlayerObservedTab == tab) return;
+        if (mTubePlayerObservedTab != null) {
+            mTubePlayerObservedTab.removeObserver(mTubePlayerNavigationObserver);
+        }
+        mTubePlayerObservedTab = tab;
+        if (tab != null) {
+            tab.addObserver(mTubePlayerNavigationObserver);
+        }
+    }
+
     private final org.chromium.base.Callback<Tab> mTubePlayerTabChangeCallback =
             tab -> {
+                observeTubePlayerNavigation(tab);
                 handlePendingTubePlayerLaunch();
                 updateTubePlayerToolbarPresentation();
             };
@@ -1198,6 +1221,7 @@ public abstract class BraveActivity extends ChromeActivity
         if (mTubePlayerTabObserverRegistered) return;
         getActivityTabProvider().addObserver(mTubePlayerTabChangeCallback);
         mTubePlayerTabObserverRegistered = true;
+        observeTubePlayerNavigation(getActivityTab());
     }
 
     private void updateTubePlayerToolbarPresentation() {
