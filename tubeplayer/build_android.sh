@@ -9,12 +9,14 @@ if [[ ! -f package.json ]]; then
   echo "ERROR: Run this script from the brave-core checkout." >&2
   exit 1
 fi
-if ! command -v pnpm >/dev/null 2>&1; then
-  echo "ERROR: pnpm is required; see Brave Android development instructions." >&2
+python3 tubeplayer/validate_prototype.py
+
+# Preflight should work without Node or pnpm; require those only when
+# explicitly starting the heavyweight Chromium/Brave build.
+if [[ "${TUBEPLAYER_CONFIRM_BUILD:-}" == "yes" ]] && ! command -v pnpm >/dev/null 2>&1; then
+  echo "ERROR: pnpm is required to build; see Brave Android development instructions." >&2
   exit 1
 fi
-
-python3 tubeplayer/validate_prototype.py
 
 ARCH="${TUBEPLAYER_ARCH:-arm64}"
 case "$ARCH" in
