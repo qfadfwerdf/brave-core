@@ -591,6 +591,10 @@ public abstract class BraveActivity extends ChromeActivity
 
     @Override
     protected void onDestroyInternal() {
+        if (mTubePlayerTabObserverRegistered) {
+            getActivityTabProvider().removeObserver(mTubePlayerTabChangeCallback);
+            mTubePlayerTabObserverRegistered = false;
+        }
         // If the search widget promo panel is shown, we mark its visibility
         // before the activity is destroyed and recreated (e.g when the night mode state changes).
         // The new search widget promo panel will be recreated with the new appropriate theme and
@@ -1181,6 +1185,21 @@ public abstract class BraveActivity extends ChromeActivity
         }
     }
 
+    // The ActivityTabProvider tracks the selected tab across navigation and
+    // tab switching. Only register after native startup, when it is available.
+    private final org.chromium.base.Callback<Tab> mTubePlayerTabChangeCallback =
+            tab -> {
+                handlePendingTubePlayerLaunch();
+                updateTubePlayerToolbarPresentation();
+            };
+    private boolean mTubePlayerTabObserverRegistered;
+
+    private void registerTubePlayerTabObserver() {
+        if (mTubePlayerTabObserverRegistered) return;
+        getActivityTabProvider().addObserver(mTubePlayerTabChangeCallback);
+        mTubePlayerTabObserverRegistered = true;
+    }
+
     private void updateTubePlayerToolbarPresentation() {
         if (getToolbarManager() instanceof BraveToolbarManager) {
             ((BraveToolbarManager) getToolbarManager())
@@ -1238,6 +1257,7 @@ public abstract class BraveActivity extends ChromeActivity
         }
 
         super.onStartWithNative();
+        registerTubePlayerTabObserver();
         // Startup may not have an activity tab at the first onResume().
         handlePendingTubePlayerLaunch();
         updateTubePlayerToolbarPresentation();
