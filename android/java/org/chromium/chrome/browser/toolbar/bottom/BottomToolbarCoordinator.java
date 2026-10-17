@@ -91,6 +91,7 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
     private final HomepageManager mHomepageManager;
     private final BookmarkManagerOpener mBookmarkManagerOpener;
     private boolean mIsInTabSwitcherMode;
+    private boolean mTubePlayerBottomToolbarHidden;
 
     private final Context mContext = ContextUtils.getApplicationContext();
 
@@ -215,6 +216,7 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
                         public void onStartedShowing(@LayoutType int layoutType) {
                             if (layoutType != LayoutType.HUB) return;
                             mIsInTabSwitcherMode = true;
+                            updateTubePlayerBottomToolbarVisibility();
                             BrowsingModeBottomToolbarCoordinator browsingModeCoordinator =
                                     (BrowsingModeBottomToolbarCoordinator) mBrowsingModeCoordinator;
                             browsingModeCoordinator.getSearchAccelerator().setVisibility(View.GONE);
@@ -246,6 +248,7 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
                         public void onStartedHiding(@LayoutType int layoutType) {
                             if (layoutType != LayoutType.HUB) return;
                             mIsInTabSwitcherMode = false;
+                            updateTubePlayerBottomToolbarVisibility();
                             BrowsingModeBottomToolbarCoordinator browsingModeCoordinator =
                                     (BrowsingModeBottomToolbarCoordinator) mBrowsingModeCoordinator;
                             browsingModeCoordinator
@@ -338,7 +341,16 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
      * Caller must restore visibility on leaving dedicated presentation.
      */
     void setTubePlayerBottomToolbarHidden(boolean hidden) {
-        mScrollingBottomView.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        mTubePlayerBottomToolbarHidden = hidden;
+        updateTubePlayerBottomToolbarVisibility();
+    }
+
+    private void updateTubePlayerBottomToolbarVisibility() {
+        // Never hide the controls used by Brave's tab overview.
+        mScrollingBottomView.setVisibility(
+                mTubePlayerBottomToolbarHidden && !mIsInTabSwitcherMode
+                        ? View.GONE
+                        : View.VISIBLE);
     }
 
     /**
