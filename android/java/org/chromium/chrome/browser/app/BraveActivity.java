@@ -1162,6 +1162,13 @@ public abstract class BraveActivity extends ChromeActivity
                 && TubePlayerLaunch.isYouTubePage(tab.getUrl().getSpec());
     }
 
+    private void updateTubePlayerToolbarPresentation() {
+        if (getToolbarManager() instanceof BraveToolbarManager) {
+            ((BraveToolbarManager) getToolbarManager())
+                    .setTubePlayerToolbarHidden(isTubePlayerPresentationActive());
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1181,6 +1188,7 @@ public abstract class BraveActivity extends ChromeActivity
                 }
             }
         }
+        updateTubePlayerToolbarPresentation();
         mIsProcessingPendingDappsTxRequest = false;
 
         PostTask.postTask(
@@ -2653,6 +2661,7 @@ public abstract class BraveActivity extends ChromeActivity
                 }
             }
         }
+        updateTubePlayerToolbarPresentation();
         checkForNotificationData();
     }
 
