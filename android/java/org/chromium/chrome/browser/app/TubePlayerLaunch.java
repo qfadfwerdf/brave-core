@@ -13,6 +13,7 @@ import android.content.Intent;
  * The flag is consumed once so an Activity resume does not repeatedly redirect.
  */
 public final class TubePlayerLaunch {
+    public static final String ACTION_OPEN = "org.brave.tubeplayer.action.OPEN";
     public static final String EXTRA_ENABLED = "org.brave.tubeplayer.ENABLED";
     // The mobile YouTube site already provides Home, Shorts, subscriptions,
     // search, and video playback UI. Reuse that UI rather than imitate it.
