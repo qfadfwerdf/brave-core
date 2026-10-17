@@ -837,6 +837,16 @@ public class BraveToolbarManager extends ToolbarManager
         }
     }
 
+    /** Keep Brave's own bottom navigation separate from YouTube web navigation. */
+    public void setTubePlayerBottomToolbarHidden(boolean hidden) {
+        if (mTabGroupUiBottomControlsCoordinatorSupplier == null) return;
+        var coordinator = mTabGroupUiBottomControlsCoordinatorSupplier.get();
+        if (coordinator instanceof BraveBottomControlsCoordinator) {
+            ((BraveBottomControlsCoordinator) coordinator)
+                    .setTubePlayerBottomToolbarHidden(hidden);
+        }
+    }
+
     public void openHomepage() {
         if (mToolbarTabController == null) return;
 
