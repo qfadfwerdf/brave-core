@@ -1152,14 +1152,12 @@ public abstract class BraveActivity extends ChromeActivity
         super.onResume();
         // Experimental opt-in only; do not interfere with normal Brave launches.
         // Consume the intent extra once to avoid redirecting after every resume.
-        if (getIntent() != null
-                && getIntent().getBooleanExtra("org.brave.tubeplayer.ENABLED", false)) {
-            getIntent().removeExtra("org.brave.tubeplayer.ENABLED");
+        if (TubePlayerLaunch.consumeLaunchRequest(getIntent())) {
             Tab tubePlayerTab = getActivityTab();
             if (tubePlayerTab != null
                     && tubePlayerTab.getUrl() != null
                     && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
-                tubePlayerTab.loadUrl(new LoadUrlParams("https://m.youtube.com/"));
+                tubePlayerTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
             }
         }
         mIsProcessingPendingDappsTxRequest = false;
