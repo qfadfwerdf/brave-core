@@ -398,6 +398,15 @@ public abstract class BraveActivity extends ChromeActivity
             mTubePlayerPresentationRequested =
                     savedState.getBoolean(TUBEPLAYER_PRESENTATION_STATE, false);
         }
+        // A normal Brave launcher request must take precedence over a saved
+        // TubePlayer presentation state after Activity recreation.
+        Intent currentIntent = getIntent();
+        if (currentIntent != null
+                && Intent.ACTION_MAIN.equals(currentIntent.getAction())
+                && currentIntent.hasCategory(Intent.CATEGORY_LAUNCHER)
+                && !currentIntent.getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
+            mTubePlayerPresentationRequested = false;
+        }
         getYouTubePictureInPictureController().onPostCreate(savedState);
     }
 
