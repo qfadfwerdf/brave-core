@@ -1,0 +1,20 @@
+name: TubePlayer source checks
+
+on:
+  push:
+    branches:
+      - tubeplayer/prototype
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Android source integration
+        run: python3 tubeplayer/validate_prototype.py
