@@ -333,6 +333,15 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
     }
 
     /**
+     * Hide Brave's bottom browser controls for dedicated YouTube presentation.
+     * The site's own bottom navigation is part of web content and unaffected.
+     * Caller must restore visibility on leaving dedicated presentation.
+     */
+    void setTubePlayerBottomToolbarHidden(boolean hidden) {
+        mScrollingBottomView.setVisibility(hidden ? View.GONE : View.VISIBLE);
+    }
+
+    /**
      * Clean up any state when the bottom toolbar is destroyed.
      */
     void destroy() {
