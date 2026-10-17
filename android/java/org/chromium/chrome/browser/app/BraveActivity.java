@@ -1150,6 +1150,18 @@ public abstract class BraveActivity extends ChromeActivity
     @Override
     public void onResume() {
         super.onResume();
+        // TubePlayer prototype: opt-in launch from an explicit Android Intent extra.
+        // Only replace a new-tab page, never an existing browsing session.
+        // This keeps standard Brave startup behavior unchanged by default.
+        if (getIntent() != null
+                && getIntent().getBooleanExtra("org.brave.tubeplayer.ENABLED", false)) {
+            Tab tubePlayerTab = getActivityTab();
+            if (tubePlayerTab != null
+                    && tubePlayerTab.getUrl() != null
+                    && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
+                tubePlayerTab.loadUrl(new LoadUrlParams("https://m.youtube.com/"));
+            }
+        }
         mIsProcessingPendingDappsTxRequest = false;
 
         PostTask.postTask(
