@@ -14,7 +14,19 @@ import android.content.Intent;
  */
 public final class TubePlayerLaunch {
     public static final String EXTRA_ENABLED = "org.brave.tubeplayer.ENABLED";
+    // The mobile YouTube site already provides Home, Shorts, subscriptions,
+    // search, and video playback UI. Reuse that UI rather than imitate it.
     public static final String START_URL = "https://m.youtube.com/";
+    public static final String YOUTUBE_HOST = "youtube.com";
+    public static final String MOBILE_YOUTUBE_HOST = "m.youtube.com";
+
+    /** Only YouTube pages are eligible for the dedicated app presentation. */
+    public static boolean isYouTubeHost(String host) {
+        if (host == null) return false;
+        String normalized = host.toLowerCase(java.util.Locale.ROOT);
+        return normalized.equals(YOUTUBE_HOST)
+                || normalized.endsWith("." + YOUTUBE_HOST);
+    }
 
     private TubePlayerLaunch() {}
 
