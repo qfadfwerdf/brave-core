@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "android/java/org/chromium/chrome/browser/app"
 MANIFEST = ROOT / "android/java/AndroidManifest.xml"
 GN = ROOT / "android/brave_java_sources.gni"
-ICON = ROOT / "android/java/res/drawable/tubeplayer_launcher_icon.xml"
+ICON = ROOT / "android/java/brave-res/drawable/tubeplayer_launcher_icon.xml"
+RESOURCES_GN = ROOT / "android/BUILD.gn"
 
 def require(condition, message):
     if not condition:
@@ -56,6 +57,8 @@ def main():
         any(a.get(ns + "name") == "android.intent.action.MAIN" for a in f.findall("action"))
         and any(c.get(ns + "name") == "android.intent.category.LAUNCHER" for c in f.findall("category"))
         for f in filters), "Missing launcher intent filter")
+    require("java/brave-res/drawable/tubeplayer_launcher_icon.xml" in RESOURCES_GN.read_text(),
+            "TubePlayer icon missing from GN android_resources sources")
     icon = ET.parse(ICON).getroot()
     require(icon.tag == "vector", "Icon is not an Android vector drawable")
     print("PASS: source registration, launcher, manifest, icon, presentation wiring")
