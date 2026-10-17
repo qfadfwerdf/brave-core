@@ -127,6 +127,7 @@ import java.util.function.Supplier;
 public class BraveToolbarManager extends ToolbarManager
         implements OnSharedPreferenceChangeListener {
     private static final String TAG = "BraveToolbarManager";
+    private boolean mTubePlayerBottomToolbarHidden;
 
     // To delete in bytecode, members from parent class will be used instead.
     private SettableMonotonicObservableSupplier<BottomControlsCoordinator>
@@ -521,6 +522,10 @@ public class BraveToolbarManager extends ToolbarManager
         assert mTabGroupUiBottomControlsCoordinatorSupplier != null
                 : "It must not be null at this point! Something has changed in the upstream!";
         mTabGroupUiBottomControlsCoordinatorSupplier.set(bottomControlsCoordinator);
+        if (bottomControlsCoordinator instanceof BraveBottomControlsCoordinator) {
+            ((BraveBottomControlsCoordinator) bottomControlsCoordinator)
+                    .setTubePlayerBottomToolbarHidden(mTubePlayerBottomToolbarHidden);
+        }
         mBottomControls.setBottomControlsCoordinatorSupplier(
                 mTabGroupUiBottomControlsCoordinatorSupplier);
         updateBraveBottomControlsVisibility();
@@ -839,6 +844,7 @@ public class BraveToolbarManager extends ToolbarManager
 
     /** Keep Brave's own bottom navigation separate from YouTube web navigation. */
     public void setTubePlayerBottomToolbarHidden(boolean hidden) {
+        mTubePlayerBottomToolbarHidden = hidden;
         if (mTabGroupUiBottomControlsCoordinatorSupplier == null) return;
         var coordinator = mTabGroupUiBottomControlsCoordinatorSupplier.get();
         if (coordinator instanceof BraveBottomControlsCoordinator) {
