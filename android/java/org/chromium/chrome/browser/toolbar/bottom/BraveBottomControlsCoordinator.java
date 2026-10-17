@@ -188,6 +188,13 @@ public class BraveBottomControlsCoordinator extends BottomControlsCoordinator {
         }
     }
 
+    /** Apply dedicated YouTube presentation to Brave's bottom browser controls. */
+    public void setTubePlayerBottomToolbarHidden(boolean hidden) {
+        if (mBottomToolbarCoordinator != null) {
+            mBottomToolbarCoordinator.setTubePlayerBottomToolbarHidden(hidden);
+        }
+    }
+
     public void setBottomToolbarVisible(boolean visible) {
         if (mMediator instanceof BraveBottomControlsMediator) {
             ((BraveBottomControlsMediator) mMediator).setBottomToolbarVisible(visible);
