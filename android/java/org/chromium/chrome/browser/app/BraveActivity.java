@@ -2617,6 +2617,16 @@ public abstract class BraveActivity extends ChromeActivity
             BraveOriginDeepLinkHandler.open(this);
         }
         if (intent != null) {
+            // Handle a TubePlayer request delivered to an already-running Activity.
+            // Do not redirect if the user is browsing an existing page.
+            if (TubePlayerLaunch.consumeLaunchRequest(intent)) {
+                Tab currentTab = getActivityTab();
+                if (currentTab != null
+                        && currentTab.getUrl() != null
+                        && UrlUtilities.isNtpUrl(currentTab.getUrl().getSpec())) {
+                    currentTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
+                }
+            }
             String openUrl = intent.getStringExtra(BraveActivity.OPEN_URL);
             if (!TextUtils.isEmpty(openUrl) && !BraveIntentHandler.isUrlUnsafe(openUrl)) {
                 try {
