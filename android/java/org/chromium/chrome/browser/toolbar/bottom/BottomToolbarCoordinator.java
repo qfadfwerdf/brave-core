@@ -345,12 +345,22 @@ class BottomToolbarCoordinator implements View.OnLongClickListener {
         updateTubePlayerBottomToolbarVisibility();
     }
 
+    private int mTubePlayerOriginalBottomVisibility = View.VISIBLE;
+    private boolean mTubePlayerOverridingBottomVisibility;
+
     private void updateTubePlayerBottomToolbarVisibility() {
-        // Never hide the controls used by Brave's tab overview.
-        mScrollingBottomView.setVisibility(
-                mTubePlayerBottomToolbarHidden && !mIsInTabSwitcherMode
-                        ? View.GONE
-                        : View.VISIBLE);
+        // Do not override ordinary Brave visibility (fullscreen, layout changes).
+        boolean shouldHide = mTubePlayerBottomToolbarHidden && !mIsInTabSwitcherMode;
+        if (shouldHide) {
+            if (!mTubePlayerOverridingBottomVisibility) {
+                mTubePlayerOriginalBottomVisibility = mScrollingBottomView.getVisibility();
+                mTubePlayerOverridingBottomVisibility = true;
+            }
+            mScrollingBottomView.setVisibility(View.GONE);
+        } else if (mTubePlayerOverridingBottomVisibility) {
+            mScrollingBottomView.setVisibility(mTubePlayerOriginalBottomVisibility);
+            mTubePlayerOverridingBottomVisibility = false;
+        }
     }
 
     /**
