@@ -1180,6 +1180,7 @@ public abstract class BraveActivity extends ChromeActivity
     private void handlePendingTubePlayerLaunch() {
         Intent launchIntent = getIntent();
         if (launchIntent == null
+                || !TubePlayerLaunch.ACTION_OPEN.equals(launchIntent.getAction())
                 || !launchIntent.getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
             return;
         }
@@ -2716,7 +2717,8 @@ public abstract class BraveActivity extends ChromeActivity
         if (intent != null) {
             // Handle a TubePlayer request delivered to an already-running Activity.
             // Do not redirect if the user is browsing an existing page.
-            if (intent.getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
+            if (TubePlayerLaunch.ACTION_OPEN.equals(intent.getAction())
+                    && intent.getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
                 // onNewIntent may arrive before the tab is ready. Preserve the
                 // request on the Activity intent for the startup retry path.
                 setIntent(intent);
