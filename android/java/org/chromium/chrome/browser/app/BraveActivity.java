@@ -1185,6 +1185,17 @@ public abstract class BraveActivity extends ChromeActivity
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            // Reconcile UI after returning from a video fullscreen Activity
+            // or another window. Navigation observers are still required.
+            handlePendingTubePlayerLaunch();
+            updateTubePlayerToolbarPresentation();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         handlePendingTubePlayerLaunch();
