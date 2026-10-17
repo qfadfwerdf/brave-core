@@ -6,7 +6,6 @@ Run from the brave-core repository root:
 This is not a substitute for a Chromium Android compile or device test.
 """
 from pathlib import Path
-import re
 import sys
 import xml.etree.ElementTree as ET
 
@@ -22,6 +21,8 @@ def require(condition, message):
 
 def main():
     launch = (APP / "TubePlayerLaunch.java").read_text()
+    require('ACTION_OPEN = "org.brave.tubeplayer.action.OPEN"' in launch,
+            "Dedicated TubePlayer action missing")
     launcher = (APP / "TubePlayerLauncherActivity.java").read_text()
     activity = (APP / "BraveActivity.java").read_text()
     sources = GN.read_text()
@@ -37,8 +38,11 @@ def main():
     require("setTubePlayerToolbarHidden" in activity, "Top controls not wired")
     # Brave's AndroidManifest.xml is a fragment inserted into Chromium's manifest.
     # Wrap it in a temporary root for syntax validation.
-    root = ET.fromstring('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><application>'
-                         + manifest + '</application></manifest>')
+    # The fragment can reference namespaces supplied by Chromium's outer manifest.
+    root = ET.fromstring(
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
+        'xmlns:tools="http://schemas.android.com/tools">'
+        '<application>' + manifest + '</application></manifest>')
     ns = "{http://schemas.android.com/apk/res/android}"
     matches = [a for a in root.findall(".//activity")
                if a.get(ns + "name") == "org.chromium.chrome.browser.app.TubePlayerLauncherActivity"]
