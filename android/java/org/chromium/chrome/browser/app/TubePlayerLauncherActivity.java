@@ -21,7 +21,7 @@ public final class TubePlayerLauncherActivity extends Activity {
         Intent intent = new Intent(this, ChromeTabbedActivity.class);
         // Use a dedicated action so Chromium does not treat this as an
         // ordinary Brave launcher intent during startup.
-        intent.setAction("org.brave.tubeplayer.action.OPEN");
+        intent.setAction(TubePlayerLaunch.ACTION_OPEN);
         intent.putExtra(TubePlayerLaunch.EXTRA_ENABLED, true);
         // Reuse the existing tabbed Activity when present, but do not clear
         // the entire task stack (which could discard unrelated Brave UI).
