@@ -246,17 +246,28 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
      * must call this again after navigation and tab-switcher transitions.
      * This only changes the toolbar view; it does not affect Brave Shields.
      */
+    private int mTubePlayerOriginalToolbarVisibility = View.VISIBLE;
+    private boolean mTubePlayerOverridingToolbarVisibility;
+
     public void setTubePlayerToolbarHidden(boolean hidden) {
         mTubePlayerToolbarHidden = hidden;
         updateTubePlayerToolbarVisibility();
     }
 
     private void updateTubePlayerToolbarVisibility() {
-        // Tab switcher controls must remain accessible even in dedicated mode.
-        mControlContainer.setVisibility(
-                mTubePlayerToolbarHidden && !mInTabSwitcherMode
-                        ? View.GONE
-                        : View.VISIBLE);
+        // Do not force the toolbar visible during ordinary Brave browsing:
+        // Chromium may have hidden it for fullscreen or other UI states.
+        boolean shouldHide = mTubePlayerToolbarHidden && !mInTabSwitcherMode;
+        if (shouldHide) {
+            if (!mTubePlayerOverridingToolbarVisibility) {
+                mTubePlayerOriginalToolbarVisibility = mControlContainer.getVisibility();
+                mTubePlayerOverridingToolbarVisibility = true;
+            }
+            mControlContainer.setVisibility(View.GONE);
+        } else if (mTubePlayerOverridingToolbarVisibility) {
+            mControlContainer.setVisibility(mTubePlayerOriginalToolbarVisibility);
+            mTubePlayerOverridingToolbarVisibility = false;
+        }
     }
 
     public boolean isToolbarPhone() {
