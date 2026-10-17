@@ -387,15 +387,24 @@ public abstract class BraveActivity extends ChromeActivity
 
     public BraveActivity() {}
 
+    private static final String TUBEPLAYER_PRESENTATION_STATE =
+            "org.brave.tubeplayer.PRESENTATION_REQUESTED";
+
     @Override
     protected void onPostCreate() {
         super.onPostCreate();
-        getYouTubePictureInPictureController().onPostCreate(getSavedInstanceState());
+        Bundle savedState = getSavedInstanceState();
+        if (savedState != null) {
+            mTubePlayerPresentationRequested =
+                    savedState.getBoolean(TUBEPLAYER_PRESENTATION_STATE, false);
+        }
+        getYouTubePictureInPictureController().onPostCreate(savedState);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(TUBEPLAYER_PRESENTATION_STATE, mTubePlayerPresentationRequested);
         getYouTubePictureInPictureController().onSaveInstanceState(outState);
     }
 
