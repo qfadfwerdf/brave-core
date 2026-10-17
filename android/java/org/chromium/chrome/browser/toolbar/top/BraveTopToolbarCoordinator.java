@@ -72,6 +72,7 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
     private final NullableObservableSupplier<@BrowserControlsState Integer> mConstraintsProxy;
     private final ToolbarControlContainer mControlContainer;
     private boolean mInTabSwitcherMode;
+    private boolean mTubePlayerToolbarHidden;
 
     public BraveTopToolbarCoordinator(
             ToolbarControlContainer controlContainer,
@@ -246,7 +247,16 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
      * This only changes the toolbar view; it does not affect Brave Shields.
      */
     public void setTubePlayerToolbarHidden(boolean hidden) {
-        mControlContainer.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        mTubePlayerToolbarHidden = hidden;
+        updateTubePlayerToolbarVisibility();
+    }
+
+    private void updateTubePlayerToolbarVisibility() {
+        // Tab switcher controls must remain accessible even in dedicated mode.
+        mControlContainer.setVisibility(
+                mTubePlayerToolbarHidden && !mInTabSwitcherMode
+                        ? View.GONE
+                        : View.VISIBLE);
     }
 
     public boolean isToolbarPhone() {
@@ -268,6 +278,7 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
         mInTabSwitcherMode = inTabSwitcherMode;
 
         super.setTabSwitcherMode(inTabSwitcherMode);
+        updateTubePlayerToolbarVisibility();
     }
 
     @Override
@@ -276,7 +287,7 @@ public class BraveTopToolbarCoordinator extends TopToolbarCoordinator {
 
         if (isToolbarPhone() && mInTabSwitcherMode) {
             // Make sure we have proper state at the end of the tab switcher transition.
-            mControlContainer.setVisibility(View.VISIBLE);
+            updateTubePlayerToolbarVisibility();
         }
     }
 }
