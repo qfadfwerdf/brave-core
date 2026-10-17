@@ -1162,6 +1162,21 @@ public abstract class BraveActivity extends ChromeActivity
                 && TubePlayerLaunch.isYouTubePage(tab.getUrl().getSpec());
     }
 
+    private void handlePendingTubePlayerLaunch() {
+        Intent launchIntent = getIntent();
+        if (launchIntent == null
+                || !launchIntent.getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
+            return;
+        }
+        Tab tab = getActivityTab();
+        if (tab == null) return;
+        TubePlayerLaunch.consumeLaunchRequest(launchIntent);
+        mTubePlayerPresentationRequested = true;
+        if (tab.getUrl() != null && UrlUtilities.isNtpUrl(tab.getUrl().getSpec())) {
+            tab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
+        }
+    }
+
     private void updateTubePlayerToolbarPresentation() {
         if (getToolbarManager() instanceof BraveToolbarManager) {
             ((BraveToolbarManager) getToolbarManager())
@@ -1172,22 +1187,7 @@ public abstract class BraveActivity extends ChromeActivity
     @Override
     public void onResume() {
         super.onResume();
-        // Experimental opt-in only; do not interfere with normal Brave launches.
-        // Consume the intent extra once to avoid redirecting after every resume.
-        if (getIntent() != null
-                && getIntent().getBooleanExtra(TubePlayerLaunch.EXTRA_ENABLED, false)) {
-            Tab tubePlayerTab = getActivityTab();
-            // Do not consume the request until a tab exists. The first resume can
-            // occur before tab restoration finishes.
-            if (tubePlayerTab != null) {
-                TubePlayerLaunch.consumeLaunchRequest(getIntent());
-                mTubePlayerPresentationRequested = true;
-                if (tubePlayerTab.getUrl() != null
-                        && UrlUtilities.isNtpUrl(tubePlayerTab.getUrl().getSpec())) {
-                    tubePlayerTab.loadUrl(new LoadUrlParams(TubePlayerLaunch.START_URL));
-                }
-            }
-        }
+        handlePendingTubePlayerLaunch();
         updateTubePlayerToolbarPresentation();
         mIsProcessingPendingDappsTxRequest = false;
 
@@ -1223,6 +1223,9 @@ public abstract class BraveActivity extends ChromeActivity
         }
 
         super.onStartWithNative();
+        // Startup may not have an activity tab at the first onResume().
+        handlePendingTubePlayerLaunch();
+        updateTubePlayerToolbarPresentation();
     }
 
     /**
