@@ -19,8 +19,9 @@ public final class TubePlayerLauncherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, ChromeTabbedActivity.class);
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        // Use a dedicated action so Chromium does not treat this as an
+        // ordinary Brave launcher intent during startup.
+        intent.setAction("org.brave.tubeplayer.action.OPEN");
         intent.putExtra(TubePlayerLaunch.EXTRA_ENABLED, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
