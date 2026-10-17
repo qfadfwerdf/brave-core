@@ -830,6 +830,13 @@ public class BraveToolbarManager extends ToolbarManager
         }
     }
 
+    /** Apply the dedicated YouTube presentation to the actual top toolbar. */
+    public void setTubePlayerToolbarHidden(boolean hidden) {
+        if (mToolbar instanceof BraveTopToolbarCoordinator) {
+            ((BraveTopToolbarCoordinator) mToolbar).setTubePlayerToolbarHidden(hidden);
+        }
+    }
+
     public void openHomepage() {
         if (mToolbarTabController == null) return;
 
