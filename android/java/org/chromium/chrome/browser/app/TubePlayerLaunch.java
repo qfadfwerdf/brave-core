@@ -47,7 +47,9 @@ public final class TubePlayerLaunch {
     private TubePlayerLaunch() {}
 
     public static boolean consumeLaunchRequest(Intent intent) {
-        if (intent == null || !intent.getBooleanExtra(EXTRA_ENABLED, false)) {
+        if (intent == null
+                || !ACTION_OPEN.equals(intent.getAction())
+                || !intent.getBooleanExtra(EXTRA_ENABLED, false)) {
             return false;
         }
         intent.removeExtra(EXTRA_ENABLED);
